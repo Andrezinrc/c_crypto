@@ -139,3 +139,27 @@ int encrypt(const char* filePath, const char* keyPath) {
 
     return 1;
 }
+
+// descriptografa arquivo com a chave carregada
+int decrypt(const char* filePath, const char* keyPath){
+    // abre o arquivo
+    FILE* file = fopen(filePath, "rb");
+    if(!file){
+        perror("Erro ao abrir o arquivo");
+        return 0;
+    }
+
+    // abre o arquivo da chave
+    FILE* keyFile = fopen(keyPath, "rb");
+    if(!keyFile){
+        perror("Erro ao abrir o arquivo da chave");
+        fclose(file);
+        return 0;
+    }
+
+    // le e verifica o header "CRYPTED"
+    // pega o tamanho do arquivo
+    // calcula o tamanho dos dados reais. obs: sem header
+
+    return 1;
+}

@@ -18,9 +18,11 @@
 // gera uma nova chave e salva
 // carrega chave de um arquivo
 // criptografa arquivos com a chave carregada
+// descriptografa arquivo com a chave carregada
 
 void generateKey();
 int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize);
 int encrypt(const char* filePath, const char* keyPath);
+int decrypt(const char* filePath, const char* keyPath);
 
 #endif
