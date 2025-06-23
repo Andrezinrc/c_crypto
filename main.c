@@ -29,7 +29,11 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Erro ao criptografar o arquivo.\n");
         }
     } else if (strcmp(operation, "decrypt") == 0) {
-        // decrypt
+        if (decrypt(file, fileKey)) {
+            printf("Arquivo descriptografado com sucesso!\n");
+        } else {
+            fprintf(stderr, "Erro ao descriptografar o arquivo.\n");
+        }
     } else {
         fprintf(stderr, "Operação inválida: %s\n", operation);
         return 1;

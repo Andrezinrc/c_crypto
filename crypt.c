@@ -158,8 +158,65 @@ int decrypt(const char* filePath, const char* keyPath){
     }
 
     // le e verifica o header "CRYPTED"
-    // pega o tamanho do arquivo
-    // calcula o tamanho dos dados reais. obs: sem header
+    char headerBuffer[HEADER_CRYPTO_SIZE];
+    fread(headerBuffer, 1, HEADER_CRYPTO_SIZE, file);
+    
+    if (memcmp(headerBuffer, HEADER_CRYPTO, HEADER_CRYPTO_SIZE) != 0) {
+        fprintf(stderr, "Erro: Arquivo não está criptografado ou está corrompido.\n");
+        fclose(file);
+        fclose(keyFile);
+        return 0;
+    }
 
+    // pega o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+
+    // calcula o tamanho dos dados reais obs: sem o header
+    long dataSize = fileSize - HEADER_CRYPTO_SIZE;
+
+    // aloca memoria
+    unsigned char* buffer = malloc(dataSize);
+    fseek(file, HEADER_CRYPTO_SIZE, SEEK_SET); // pula o header
+    fread(buffer, 1, dataSize, file);
+    fclose(file);
+
+    // lê a chave
+    fseek(keyFile, 0, SEEK_END);
+    long keySize = ftell(keyFile);
+    rewind(keyFile);
+
+    unsigned char* key = malloc(keySize);
+    fread(key, 1, keySize, keyFile);
+    fclose(keyFile);
+
+    if (!buffer || !key) {
+        perror("Erro de memória");
+        free(buffer);
+        free(key);
+        return 0;
+    }
+
+    // descriptografa
+    for (long i = 0; i < dataSize; i++) {
+        buffer[i] = (256 + buffer[i] - key[i % keySize]) % 256;
+    }
+
+    // sobrescreve o arquivo com os dados restaurados
+    FILE* outFile = fopen(filePath, "wb");
+    if (!outFile) {
+        perror("Erro ao abrir arquivo para escrita");
+        free(buffer);
+        free(key);
+        return 0;
+    }
+
+    fwrite(buffer, 1, dataSize, outFile);
+    fclose(outFile);
+
+    //libera a memoria
+    free(buffer);
+    free(key);
     return 1;
 }
