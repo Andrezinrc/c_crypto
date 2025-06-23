@@ -67,3 +67,75 @@ int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize) {
 
     return 1;
 }
+
+// criptografa arquivos com a chave carregada
+int encrypt(const char* filePath, const char* keyPath) {
+    FILE* file = fopen(filePath, "rb");
+    if (!file) {
+        perror("Erro ao abrir o arquivo");
+        return 0;
+    }
+
+    // abre o arquivo da chave
+    FILE* keyFile = fopen(keyPath, "rb");
+    if (!keyFile) {
+        perror("Erro ao abrir o arquivo da chave");
+        fclose(file);
+        return 0;
+    }
+
+    // pega o tamanho do arquivo
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+
+    // pega o tamanho da chave
+    fseek(keyFile, 0, SEEK_END);
+    long keySize = ftell(keyFile);
+    rewind(keyFile);
+
+    // aloca memoria para dados e chave
+    unsigned char* buffer = malloc(fileSize);
+    unsigned char* key = malloc(keySize);
+    if (!buffer || !key) {
+        perror("Erro ao alocar memória");
+        fclose(file);
+        fclose(keyFile);
+        free(buffer);
+        free(key);
+        return 0;
+    }
+
+    // le os dados do arquivo e da chave
+    fread(buffer, 1, fileSize, file);
+    fread(key, 1, keySize, keyFile);
+    fclose(file);
+    fclose(keyFile);
+
+    // criptografa os dados usando soma modular com a chave
+    for (long i = 0; i < fileSize; i++) {
+        buffer[i] = (buffer[i] + key[i % keySize]) % 256;
+    }
+
+    // reabre o arquivo para sobrescrever com os dados criptografados
+    FILE* outFile = fopen(filePath, "wb");
+    if (!outFile) {
+        perror("Erro ao abrir arquivo para escrita");
+        free(buffer);
+        free(key);
+        return 0;
+    }
+
+    // escreve o header "CRYPTED" no início do arquivo para identificacao
+    fwrite(HEADER_CRYPTO, 1, HEADER_CRYPTO_SIZE, outFile);
+
+    // escreve os dados criptografados apos o header
+    fwrite(buffer, 1, fileSize, outFile);
+    fclose(outFile);
+
+    // libera memoria e retorna
+    free(buffer);
+    free(key);
+
+    return 1;
+}
