@@ -5,12 +5,12 @@
 #include "crypt.h"
 
 // gera uma nova chave e salva
-void generateKey(){
+void generateKey(const char* filePath){
     const char characters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    char key[HEADER_KEY_SIZE + 1];
+    char key[KEY_SIZE + 1];
         
     // abrir para escrita, cria se nao existir
-    FILE* file = fopen("chave.key", "w");
+    FILE* file = fopen(filePath, "w");
     if (!file) {
         perror("Erro ao abrir arquivo");
         return;
@@ -18,11 +18,11 @@ void generateKey(){
     
     // gera a parte aleatoia da chave
     srand(time(NULL));
-    for (int i = 0; i < HEADER_KEY_SIZE; i++) {
+    for (int i = 0; i < KEY_SIZE; i++) {
         int index = rand() % (sizeof(characters) - 1);
         key[i] = characters[index];
     }
-    key[HEADER_KEY_SIZE] = '\0';
+    key[KEY_SIZE] = '\0';
 
     // escreve no arquivo: HEADER + key
     fputs(HEADER_KEY, file);

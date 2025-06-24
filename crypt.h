@@ -21,7 +21,7 @@
 // descriptografa arquivo com a chave carregada
 // verifica se o arquivo ja esta criptografado ao checar o header "CRYPTED" no inicio
 
-void generateKey();
+void generateKey(const char* filePath);
 int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize);
 int encrypt(const char* filePath, const char* keyPath);
 int decrypt(const char* filePath, const char* keyPath);
