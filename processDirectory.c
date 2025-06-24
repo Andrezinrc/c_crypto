@@ -16,13 +16,18 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
     char fullPath[1024];
 
     while ((entry = readdir(dir)) != NULL) {
+        // ignora "." e ".."
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
             continue;
 
+        // monta o caminho completo
         snprintf(fullPath, sizeof(fullPath), "%s/%s", dirPath, entry->d_name);
 
         struct stat pathStat;
-        stat(fullPath, &pathStat);
+        if (stat(fullPath, &pathStat) != 0) {
+            perror("Erro ao obter informações do caminho");
+            continue;
+        }
 
         if (S_ISREG(pathStat.st_mode)) {
             printf(">> Processando: %s\n", fullPath);
@@ -48,6 +53,10 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
                     fprintf(stderr, "Erro ao descriptografar: %s\n", fullPath);
                 }
             }
+        }
+        else if (S_ISDIR(pathStat.st_mode)) {
+            // chamada recursiva para subdiretorios
+            processDirectory(fullPath, keyPath, encryptMode);
         }
     }
 
