@@ -220,3 +220,15 @@ int decrypt(const char* filePath, const char* keyPath){
     free(key);
     return 1;
 }
+
+// verifica se o arquivo ja esta criptografado ao checar o header "CRYPTED" no inicio
+int isAlreadyEncrypted(const char* filePath) {
+    FILE* file = fopen(filePath, "rb");
+    if (!file) return 0;
+
+    char header[HEADER_CRYPTO_SIZE];
+    size_t readBytes = fread(header, 1, HEADER_CRYPTO_SIZE, file);
+    fclose(file);
+
+    return (readBytes == HEADER_CRYPTO_SIZE && memcmp(header, HEADER_CRYPTO, HEADER_CRYPTO_SIZE) == 0);
+}
