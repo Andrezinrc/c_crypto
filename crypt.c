@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "crypt.h"
+#include "colors.h"
 
 // gera uma nova chave e salva
 void generateKey(const char* filePath){
@@ -29,7 +30,7 @@ void generateKey(const char* filePath){
     fputs(key, file);
     fclose(file);
 
-    printf("Chave gerada e salva com sucesso!\n");
+    printf(GREEN "Chave gerada e salva com sucesso!\n" RESET);
 }
 
 // carrega chave de um arquivo
@@ -51,7 +52,7 @@ int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize) {
     size_t readHeader = fread(fileHeader, sizeof(char), HEADER_KEY_SIZE, f);
     if (readHeader != HEADER_KEY_SIZE || strcmp(fileHeader, HEADER_KEY) != 0) {
         fclose(f);
-        fprintf(stderr, "Chave inválida: header incorreto\n");
+        fprintf(stderr, RED "Chave inválida: header incorreto\n" RESET);
         return 0;
     }
 
@@ -231,4 +232,31 @@ int isAlreadyEncrypted(const char* filePath) {
     fclose(file);
 
     return (readBytes == HEADER_CRYPTO_SIZE && memcmp(header, HEADER_CRYPTO, HEADER_CRYPTO_SIZE) == 0);
+}
+
+// cria um novo arquivo com o conteúdo fornecido e o criptografa
+void create_and_encrypt_file(const char* filename, const char* keyfile, const char* content) {
+    FILE* f = fopen(filename, "rb");
+    if (f) {
+        fclose(f);
+        fprintf(stderr, RED "Erro: o arquivo '%s' já existe.\n" RESET, filename);
+        return;
+    }
+
+    // valida extensão .txt
+    const char* ext = strrchr(filename, '.');
+    if (!ext || strcmp(ext, ".txt") != 0) {
+        fprintf(stderr, RED "Erro: o arquivo deve ter extensão .txt\n" RESET);
+        return;
+    }
+
+    f = fopen(filename, "wb");
+    if (!f) {
+        printf(RED "Erro ao criar o arquivo.\n" RESET);
+        return;
+    }
+    fwrite(content, sizeof(char), strlen(content), f);
+    fclose(f);
+
+    encrypt(filename, keyfile);
 }

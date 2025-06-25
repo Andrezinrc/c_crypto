@@ -4,19 +4,18 @@
 #include "crypt.h"
 #include "processDirectory.h"
 #include "colors.h"
+#include "help.h"
 
 int main(int argc, char *argv[]) {
+    printf("\033[2J\033[H");
     printf(BLUE "======================================\n" RESET);
     printf(BLUE "          SYMMETRIC CRYPTO 1.0\n" RESET);
     printf(BLUE "      Simple File Encryption Tool\n" RESET);
     printf(BLUE "======================================\n" RESET);
     printf(BLUE "   Desenvolvido por Andrecode ©2025\n\n" RESET);
-    
-    if (argc < 2) {
-        fprintf(stderr, RED "Uso:\n" RESET);
-        fprintf(stderr, RED "  %s generateKey <arquivo-chave>\n" RESET, argv[0]);
-        fprintf(stderr, RED "  %s encrypt <arquivo|pasta> <chave>\n" RESET, argv[0]);
-        fprintf(stderr, RED "  %s decrypt <arquivo|pasta> <chave>\n" RESET, argv[0]);
+
+    if (argc < 2 || strcmp(argv[1], "help") == 0) {
+        printUsage(argv[0]);
         return 1;
     }
 
@@ -31,6 +30,22 @@ int main(int argc, char *argv[]) {
 
         const char *keyFilePath = argv[2];
         generateKey(keyFilePath);
+        return 0;
+    }
+
+    // createFile
+    if (strcmp(operation, "createFile") == 0) {
+        if (argc != 5) {
+            fprintf(stderr, RED "Uso: %s createFile <arquivo.txt> <chave> <conteúdo>\n" RESET, argv[0]);
+            return 1;
+        }
+
+        const char *filename = argv[2];
+        const char *keyfile = argv[3];
+        const char *content = argv[4];
+
+        create_and_encrypt_file(filename, keyfile, content);
+        printf(GREEN "Arquivo criado e criptografado com sucesso!\n" RESET);
         return 0;
     }
 

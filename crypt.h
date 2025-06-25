@@ -20,11 +20,13 @@
 // criptografa arquivos com a chave carregada
 // descriptografa arquivo com a chave carregada
 // verifica se o arquivo ja esta criptografado ao checar o header "CRYPTED" no inicio
+// cria um novo arquivo com o conteúdo fornecido e o criptografa
 
 void generateKey(const char* filePath);
 int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize);
 int encrypt(const char* filePath, const char* keyPath);
 int decrypt(const char* filePath, const char* keyPath);
 int isAlreadyEncrypted(const char* filePath);
+void create_and_encrypt_file(const char* filename, const char* keyfile, const char* content);
 
 #endif
