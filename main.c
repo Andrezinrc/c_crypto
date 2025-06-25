@@ -3,13 +3,14 @@
 #include <sys/stat.h>
 #include "crypt.h"
 #include "processDirectory.h"
+#include "colors.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Uso:\n");
-        fprintf(stderr, "  %s generateKey <arquivo-chave>\n", argv[0]);
-        fprintf(stderr, "  %s encrypt <arquivo|pasta> <chave>\n", argv[0]);
-        fprintf(stderr, "  %s decrypt <arquivo|pasta> <chave>\n", argv[0]);
+        fprintf(stderr, RED "Uso:\n" RESET);
+        fprintf(stderr, RED "  %s generateKey <arquivo-chave>\n" RESET, argv[0]);
+        fprintf(stderr, RED "  %s encrypt <arquivo|pasta> <chave>\n" RESET, argv[0]);
+        fprintf(stderr, RED "  %s decrypt <arquivo|pasta> <chave>\n" RESET, argv[0]);
         return 1;
     }
 
@@ -18,7 +19,7 @@ int main(int argc, char *argv[]) {
     // generateKey
     if (strcmp(operation, "generateKey") == 0) {
         if (argc != 3) {
-            fprintf(stderr, "Uso: %s generateKey <arquivo-chave>\n", argv[0]);
+            fprintf(stderr, RED "Uso: %s generateKey <arquivo-chave>\n" RESET, argv[0]);
             return 1;
         }
 
@@ -29,12 +30,12 @@ int main(int argc, char *argv[]) {
 
     // encrypt / decrypt
     if (strcmp(operation, "encrypt") != 0 && strcmp(operation, "decrypt") != 0) {
-        fprintf(stderr, "Operação inválida: %s\n", operation);
+        fprintf(stderr, RED "Operação inválida: %s\n" RESET, operation);
         return 1;
     }
 
     if (argc != 4) {
-        fprintf(stderr, "Uso: %s %s <arquivo|pasta> <chave>\n", argv[0], operation);
+        fprintf(stderr, RED "Uso: %s %s <arquivo|pasta> <chave>\n" RESET, argv[0], operation);
         return 1;
     }
 
@@ -44,15 +45,16 @@ int main(int argc, char *argv[]) {
     // carrega a chave
     unsigned char key[KEY_SIZE];
     if (!loadKey(keyPath, key, KEY_SIZE)) {
-        fprintf(stderr, "Falha ao carregar a chave.\n");
+        fprintf(stderr, RED "Falha ao carregar a chave.\n" RESET);
         return 1;
     }
-    printf("Chave carregada com sucesso!\n");
+    printf(GREEN "Chave carregada com sucesso!\n" RESET);
 
     // verifica o tipo de caminho
     struct stat pathStat;
     if (stat(targetPath, &pathStat) != 0) {
-        perror("Erro ao acessar o caminho");
+        fprintf(stderr, RED "Erro ao acessar o caminho: " RESET);
+        perror("");
         return 1;
     }
 
@@ -63,23 +65,23 @@ int main(int argc, char *argv[]) {
     } else if (S_ISREG(pathStat.st_mode)) {
         if (encrypting) {
             if (isAlreadyEncrypted(targetPath)) {
-                printf("Ignorado (já criptografado): %s\n", targetPath);
+                printf(RED "Ignorado (já criptografado): %s\n" RESET, targetPath);
             } else if (encrypt(targetPath, keyPath)) {
-                printf("Arquivo criptografado com sucesso!\n");
+                printf(GREEN "Arquivo criptografado com sucesso!\n" RESET);
             } else {
-                fprintf(stderr, "Erro ao criptografar o arquivo.\n");
+                fprintf(stderr, RED "Erro ao criptografar o arquivo.\n" RESET);
             }
         } else {
             if (!isAlreadyEncrypted(targetPath)) {
-                printf("Ignorado (não criptografado): %s\n", targetPath);
+                printf(RED "Ignorado (não criptografado): %s\n" RESET, targetPath);
             } else if (decrypt(targetPath, keyPath)) {
-                printf("Arquivo descriptografado com sucesso!\n");
+                printf(GREEN "Arquivo descriptografado com sucesso!\n" RESET);
             } else {
-                fprintf(stderr, "Erro ao descriptografar o arquivo.\n");
+                fprintf(stderr, RED "Erro ao descriptografar o arquivo.\n" RESET);
             }
         }
     } else {
-        fprintf(stderr, "Caminho inválido (não é arquivo nem diretório).\n");
+        fprintf(stderr, RED "Caminho inválido (não é arquivo nem diretório).\n" RESET);
         return 1;
     }
 

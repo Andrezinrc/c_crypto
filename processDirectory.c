@@ -3,12 +3,13 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include "crypt.h"
+#include "colors.h"
 
 // percorre diretorios e subdiretorios aplicando a operacao
 void processDirectory(const char* dirPath, const char* keyPath, int encryptMode) {
     DIR* dir = opendir(dirPath);
     if (!dir) {
-        perror("Erro ao abrir diretório");
+        fprintf(stderr, RED "Erro ao abrir diretório: %s\n" RESET, dirPath);
         return;
     }
 
@@ -25,7 +26,7 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
 
         struct stat pathStat;
         if (stat(fullPath, &pathStat) != 0) {
-            perror("Erro ao obter informações do caminho");
+            fprintf(stderr, RED "Erro ao obter informações do caminho: %s\n" RESET, fullPath);
             continue;
         }
 
@@ -34,23 +35,23 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
 
             if (encryptMode) {
                 if (isAlreadyEncrypted(fullPath)) {
-                    printf("Ignorado (já criptografado): %s\n", fullPath);
+                    printf(RED "Ignorado (já criptografado): %s\n" RESET, fullPath);
                     continue;
                 }
                 if (encrypt(fullPath, keyPath)) {
-                    printf("Arquivo criptografado com sucesso: %s\n", fullPath);
+                    printf(GREEN "Arquivo criptografado com sucesso: %s\n" RESET, fullPath);
                 } else {
-                    fprintf(stderr, "Erro ao criptografar: %s\n", fullPath);
+                    fprintf(stderr, RED "Erro ao criptografar: %s\n" RESET, fullPath);
                 }
             } else {
                 if (!isAlreadyEncrypted(fullPath)) {
-                    printf("Ignorado (não criptografado): %s\n", fullPath);
+                    printf(RED "Ignorado (não criptografado): %s\n" RESET, fullPath);
                     continue;
                 }
                 if (decrypt(fullPath, keyPath)) {
-                    printf("Arquivo descriptografado com sucesso: %s\n", fullPath);
+                    printf(GREEN "Arquivo descriptografado com sucesso: %s\n" RESET, fullPath);
                 } else {
-                    fprintf(stderr, "Erro ao descriptografar: %s\n", fullPath);
+                    fprintf(stderr, RED "Erro ao descriptografar: %s\n" RESET, fullPath);
                 }
             }
         }
