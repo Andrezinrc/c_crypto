@@ -31,7 +31,8 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
         }
 
         if (S_ISREG(pathStat.st_mode)) {
-            printf(">> Processando: %s\n", fullPath);
+            printf(GREEN ">> Processando: %s\n" RESET, fullPath);
+            
 
             if (encryptMode) {
                 if (isAlreadyEncrypted(fullPath)) {

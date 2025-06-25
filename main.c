@@ -6,6 +6,12 @@
 #include "colors.h"
 
 int main(int argc, char *argv[]) {
+    printf(BLUE "======================================\n" RESET);
+    printf(BLUE "          SYMMETRIC CRYPTO 1.0\n" RESET);
+    printf(BLUE "      Simple File Encryption Tool\n" RESET);
+    printf(BLUE "======================================\n" RESET);
+    printf(BLUE "   Desenvolvido por Andrecode ©2025\n\n" RESET);
+    
     if (argc < 2) {
         fprintf(stderr, RED "Uso:\n" RESET);
         fprintf(stderr, RED "  %s generateKey <arquivo-chave>\n" RESET, argv[0]);
