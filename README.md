@@ -1,6 +1,10 @@
-C_crypto
+# C_crypto
 
 Implementação simples de criptografia simétrica em C puro, com suporte a diretórios e subdiretórios.
+
+## Interface no terminal
+
+![Interface do programa](terminal-interface.jpeg)
 
 ## Compilação
 
@@ -11,7 +15,6 @@ gcc main.c crypt.c -o crypt
 ## Uso
 
 ```bash
-./main generateKey caminho/para/chave.key
 ./crypt encrypt arquivo_ou_pasta caminho/para/chave.key
 ./crypt decrypt arquivo_ou_pasta caminho/para/chave.key
 ```
@@ -33,3 +36,4 @@ Para contribuir:
 ---
 
 Obrigado pelo interesse e bora codar! 🚀
+

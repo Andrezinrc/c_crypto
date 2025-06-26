@@ -5,10 +5,10 @@
 // imprime no terminal a lista de comandos suportados pelo programa
 void printUsage(const char *programName){
     printf(BLUE "Uso:\n" RESET);
-    printf(BLUE "  %s generateKey <arquivo-chave>\n" RESET, programName);
-    printf(BLUE "  %s encrypt <arquivo|pasta> <chave>\n" RESET, programName);
-    printf(BLUE "  %s decrypt <arquivo|pasta> <chave>\n" RESET, programName);
-    printf(BLUE "  %s createFile <arquivo.txt> <chave> <conteúdo>\n" RESET, programName);
+    printf("  %s generateKey <arquivo-chave>\n", programName);
+    printf("  %s encrypt <arquivo|pasta> <chave>\n", programName);
+    printf("  %s decrypt <arquivo|pasta> <chave>\n", programName);
+    printf("  %s createFile <arquivo.txt> <chave> <conteúdo>\n", programName);
     
     printf(BLUE "Exemplos:\n" RESET);
     printf("  %s generateKey minha.key\n", programName);

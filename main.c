@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     printf(BLUE "          SYMMETRIC CRYPTO 1.0\n" RESET);
     printf(BLUE "      Simple File Encryption Tool\n" RESET);
     printf(BLUE "======================================\n" RESET);
-    printf(BLUE "   Desenvolvido por Andrecode ©2025\n\n" RESET);
+    printf("   Desenvolvido por Andrecode ©2025\n\n");
 
     if (argc < 2 || strcmp(argv[1], "help") == 0) {
         printUsage(argv[0]);
