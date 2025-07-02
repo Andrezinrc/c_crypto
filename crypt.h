@@ -14,7 +14,7 @@
 #define HEADER_CRYPTO "CRYPTED"
 #define HEADER_CRYPTO_SIZE 7
 
-
+// terminal candy: simple progress bar
 // gera uma nova chave e salva
 // carrega chave de um arquivo
 // criptografa arquivos com a chave carregada
@@ -22,6 +22,7 @@
 // verifica se o arquivo ja esta criptografado ao checar o header "CRYPTED" no inicio
 // cria um novo arquivo com o conteúdo fornecido e o criptografa
 
+void showProgressBar(int percent);
 void generateKey(const char* filePath);
 int loadKey(const char* path, unsigned char* keyBuffer, size_t bufferSize);
 int encrypt(const char* filePath, const char* keyPath);

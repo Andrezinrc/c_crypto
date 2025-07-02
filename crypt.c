@@ -1,22 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <time.h>
 #include "crypt.h"
 #include "colors.h"
 
+// terminal candy: simple progress bar
+void showProgressBar(int percent) {
+    int barWidth = 50;
+    int pos = (percent * barWidth) / 100;
+
+    printf("\r["); // \r volta pro começo da linha
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < pos)
+            printf("█");
+        else
+            printf(" ");
+    }
+    printf("] %d%%", percent);
+    fflush(stdout); // força o terminal a atualizar a linha
+}
+
 // gera uma nova chave e salva
 void generateKey(const char* filePath){
     const char characters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     char key[KEY_SIZE + 1];
-        
+
     // abrir para escrita, cria se nao existir
     FILE* file = fopen(filePath, "w");
     if (!file) {
         perror("Erro ao abrir arquivo");
         return;
     }
-    
+
     // gera a parte aleatoia da chave
     srand(time(NULL));
     for (int i = 0; i < KEY_SIZE; i++) {
@@ -113,10 +130,21 @@ int encrypt(const char* filePath, const char* keyPath) {
     fclose(file);
     fclose(keyFile);
 
+    printf("Criptografando: ");
+    int lastPercent = -1;
+
     // criptografa os dados usando soma modular com a chave
     for (long i = 0; i < fileSize; i++) {
         buffer[i] = (buffer[i] + key[i % keySize]) % 256;
+
+        // barra de progresso
+        int percent = (i * 100) / fileSize;
+        if (percent != lastPercent) {
+            showProgressBar(percent);
+            lastPercent = percent;
+        }
     }
+    printf("\n");
 
     // reabre o arquivo para sobrescrever com os dados criptografados
     FILE* outFile = fopen(filePath, "wb");
@@ -161,7 +189,7 @@ int decrypt(const char* filePath, const char* keyPath){
     // le e verifica o header "CRYPTED"
     char headerBuffer[HEADER_CRYPTO_SIZE];
     fread(headerBuffer, 1, HEADER_CRYPTO_SIZE, file);
-    
+
     if (memcmp(headerBuffer, HEADER_CRYPTO, HEADER_CRYPTO_SIZE) != 0) {
         fprintf(stderr, "Erro: Arquivo não está criptografado ou está corrompido.\n");
         fclose(file);
