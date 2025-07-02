@@ -9,7 +9,7 @@ Implementação simples de criptografia simétrica em C puro, com suporte a dire
 ## Compilação
 
 ```bash
-gcc main.c crypt.c -o crypt
+gcc main.c crypt.c processDirectory.c help.c header.c -o main && ./main
 ```
 
 ## Uso
@@ -36,4 +36,3 @@ Para contribuir:
 ---
 
 Obrigado pelo interesse e bora codar! 🚀
-

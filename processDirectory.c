@@ -4,9 +4,12 @@
 #include <sys/stat.h>
 #include "crypt.h"
 #include "colors.h"
+#include "header.h"
 
 // percorre diretorios e subdiretorios aplicando a operacao
 void processDirectory(const char* dirPath, const char* keyPath, int encryptMode) {
+    print_header(encryptMode ? "encrypt" : "decrypt");
+    
     DIR* dir = opendir(dirPath);
     if (!dir) {
         fprintf(stderr, RED "Erro ao abrir diretório: %s\n" RESET, dirPath);
@@ -33,7 +36,6 @@ void processDirectory(const char* dirPath, const char* keyPath, int encryptMode)
         if (S_ISREG(pathStat.st_mode)) {
             printf(GREEN ">> Processando: %s\n" RESET, fullPath);
             
-
             if (encryptMode) {
                 if (isAlreadyEncrypted(fullPath)) {
                     printf(RED "Ignorado (já criptografado): %s\n" RESET, fullPath);

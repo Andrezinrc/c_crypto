@@ -5,15 +5,9 @@
 #include "processDirectory.h"
 #include "colors.h"
 #include "help.h"
+#include "header.h"
 
 int main(int argc, char *argv[]) {
-    printf("\033[2J\033[H");
-    printf(BLUE "======================================\n" RESET);
-    printf(BLUE "          SYMMETRIC CRYPTO 1.0\n" RESET);
-    printf(BLUE "      Simple File Encryption Tool\n" RESET);
-    printf(BLUE "======================================\n" RESET);
-    printf("   Desenvolvido por Andrecode ©2025\n\n");
-
     if (argc < 2 || strcmp(argv[1], "help") == 0) {
         printUsage(argv[0]);
         return 1;
@@ -23,6 +17,8 @@ int main(int argc, char *argv[]) {
 
     // generateKey
     if (strcmp(operation, "generateKey") == 0) {
+        print_header("generateKey");
+
         if (argc != 3) {
             fprintf(stderr, RED "Uso: %s generateKey <arquivo-chave>\n" RESET, argv[0]);
             return 1;
@@ -35,6 +31,8 @@ int main(int argc, char *argv[]) {
 
     // createFile
     if (strcmp(operation, "createFile") == 0) {
+        print_header("createFile");
+
         if (argc != 5) {
             fprintf(stderr, RED "Uso: %s createFile <arquivo.txt> <chave> <conteúdo>\n" RESET, argv[0]);
             return 1;
@@ -85,6 +83,7 @@ int main(int argc, char *argv[]) {
         processDirectory(targetPath, keyPath, encrypting);
     } else if (S_ISREG(pathStat.st_mode)) {
         if (encrypting) {
+            print_header("encrypt");
             if (isAlreadyEncrypted(targetPath)) {
                 printf(RED "Ignorado (já criptografado): %s\n" RESET, targetPath);
             } else if (encrypt(targetPath, keyPath)) {
@@ -93,6 +92,7 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, RED "Erro ao criptografar o arquivo.\n" RESET);
             }
         } else {
+            print_header("decrypt");
             if (!isAlreadyEncrypted(targetPath)) {
                 printf(RED "Ignorado (não criptografado): %s\n" RESET, targetPath);
             } else if (decrypt(targetPath, keyPath)) {

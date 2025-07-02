@@ -4,6 +4,7 @@
 
 // imprime no terminal a lista de comandos suportados pelo programa
 void printUsage(const char *programName){
+    printf("\033[2J\033[H");
     printf(BLUE "Uso:\n" RESET);
     printf("  %s generateKey <arquivo-chave>\n", programName);
     printf("  %s encrypt <arquivo|pasta> <chave>\n", programName);
