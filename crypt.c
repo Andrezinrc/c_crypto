@@ -227,10 +227,21 @@ int decrypt(const char* filePath, const char* keyPath){
         return 0;
     }
 
+    printf("Descriptografando: ");
+    int lastPercent = -1;
+
     // descriptografa
     for (long i = 0; i < dataSize; i++) {
         buffer[i] = (256 + buffer[i] - key[i % keySize]) % 256;
+
+        // barra de progresso
+        int percent = (i * 100) / dataSize;
+        if (percent != lastPercent) {
+            showProgressBar(percent);
+            lastPercent = percent;
+        }
     }
+    printf("\n");
 
     // sobrescreve o arquivo com os dados restaurados
     FILE* outFile = fopen(filePath, "wb");
